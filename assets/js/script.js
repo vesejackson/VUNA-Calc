@@ -56,11 +56,33 @@ function calculateResult() {
     const l = parseFloat(left);
     const r = parseFloat(right);
 
+    const factorial = (n) => {
+        if (n < 0) return NaN;
+        if (n === 0 || n === 1) return 1;
+        let res = 1;
+        for (let i = 2; i <= n; i++) res *= i;
+        return res;
+    };
+
     switch (operator) {
         case '+': result = l + r; break;
         case '-': result = l - r; break;
         case '*': result = l * r; break;
         case '/': result = r !== 0 ? l / r : 'Error'; break;
+        case 'P':
+            if (l >= r && l >= 0 && r >= 0 && Number.isInteger(l) && Number.isInteger(r)) {
+                result = factorial(l) / factorial(l - r);
+            } else {
+                result = 'Error';
+            }
+            break;
+        case 'C':
+            if (l >= r && l >= 0 && r >= 0 && Number.isInteger(l) && Number.isInteger(r)) {
+                result = factorial(l) / (factorial(r) * factorial(l - r));
+            } else {
+                result = 'Error';
+            }
+            break;
         default: return;
     }
 
