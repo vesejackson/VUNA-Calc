@@ -2131,3 +2131,8 @@ function clearPercentageChange() {
     right = '';
     updateResult();
 }
+document
+  .getElementById("language-selector")
+  .addEventListener("change", function (event) {
+    currentLang = event.target.value;
+  });
