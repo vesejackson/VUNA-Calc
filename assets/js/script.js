@@ -1,3 +1,17 @@
+let currentLang = "en";
+
+const TRANSLATIONS = {
+  en: {
+    plus: "plus",
+    minus: "minus",
+    equals: "equals"
+  },
+  fr: {
+    plus: "plus",
+    minus: "moins",
+    equals: "égale"
+  }
+};
 // ------------------------------
 // Theme Toggle Logic
 // ------------------------------
