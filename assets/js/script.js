@@ -414,7 +414,7 @@ function calculateResult() {
 
     calculationHistory?.push({
       expression: currentExpression,
-      words: numberToWords(result),
+      words: numberToWords(result, currentLang),
       time: new Date().toLocaleTimeString(),
     });
 
@@ -1150,13 +1150,18 @@ function checkPrime() {
 // ------------------------------
 // Convert Number to Words
 // ------------------------------
-function numberToWords(num) {
+function numberToWords(num, lang = "en") {
   if (num === "Error") return "Error";
   if (!num) return "";
 
   const n = parseFloat(num);
   if (isNaN(n)) return "";
   if (n === 0) return "Zero";
+
+  if (lang === "fr") {
+  const frenchOnes = ["zéro", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf"];
+  return frenchOnes[num] || num.toString();
+}
 
   const ones = [
     "",
