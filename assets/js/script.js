@@ -2136,6 +2136,276 @@ function clearPercentageChange() {
     right = '';
     updateResult();
 }
+// ============================================
+// STATISTICS CALCULATOR FUNCTIONS - NEW CODE
+// ============================================
+
+/**
+ * Parse input string into array of numbers
+ * Accepts numbers separated by commas, spaces, or newlines
+ */
+function parseStatsInput() {
+  const input = document.getElementById('stats-input').value;
+  // Split by comma, space, tab, or newline
+  const tokens = input.split(/[\s,]+/);
+  const numbers = [];
+  
+  for (let token of tokens) {
+    if (token.trim() !== '') {
+      const num = parseFloat(token);
+      if (!isNaN(num)) {
+        numbers.push(num);
+      }
+    }
+  }
+  
+  return numbers;
+}
+
+/**
+ * Calculate statistical measures
+ */
+function calculateStats(type) {
+  const numbers = parseStatsInput();
+  
+  if (numbers.length === 0) {
+    alert('Please enter valid numbers first!');
+    return;
+  }
+  
+  if (numbers.length === 1) {
+    // For single number, most stats equal the number itself
+    const result = numbers[0];
+    displaySingleStat(type, result);
+    return;
+  }
+  
+  let result;
+  
+  switch (type) {
+    case 'mean':
+      result = calculateMean(numbers);
+      break;
+    case 'median':
+      result = calculateMedian(numbers);
+      break;
+    case 'mode':
+      result = calculateMode(numbers);
+      break;
+    case 'stddev':
+      result = calculateStdDev(numbers);
+      break;
+    case 'variance':
+      result = calculateVariance(numbers);
+      break;
+    case 'range':
+      result = calculateRange(numbers);
+      break;
+    case 'sum':
+      result = calculateSum(numbers);
+      break;
+    case 'count':
+      result = numbers.length;
+      break;
+    default:
+      return;
+  }
+  
+  displaySingleStat(type, result);
+}
+
+/**
+ * Display single stat result
+ */
+function displaySingleStat(type, value) {
+  const resultDiv = document.getElementById('stats-result');
+  const labelSpan = document.getElementById('stats-result-label');
+  const valueSpan = document.getElementById('stats-result-value');
+  
+  // Hide all results first
+  document.getElementById('stats-all-results').style.display = 'none';
+  
+  const labels = {
+    'mean': 'Mean (Average)',
+    'median': 'Median',
+    'mode': 'Mode',
+    'stddev': 'Standard Deviation',
+    'variance': 'Variance',
+    'range': 'Range',
+    'sum': 'Sum',
+    'count': 'Count'
+  };
+  
+  labelSpan.textContent = labels[type] || type;
+  valueSpan.textContent = formatStatsValue(value);
+  
+  resultDiv.style.display = 'block';
+  
+  // Also update main calculator display with the result
+  const displayValue = (typeof value === 'number') ? value.toString() : value;
+  currentExpression = displayValue;
+  left = displayValue;
+  operator = '';
+  right = '';
+  updateResult();
+}
+
+/**
+ * Calculate all statistics at once
+ */
+function calculateAllStats() {
+  const numbers = parseStatsInput();
+  
+  if (numbers.length === 0) {
+    alert('Please enter valid numbers first!');
+    return;
+  }
+  
+  // Hide single result
+  document.getElementById('stats-result').style.display = 'none';
+  
+  // Calculate all stats
+  const stats = {
+    count: numbers.length,
+    sum: calculateSum(numbers),
+    mean: calculateMean(numbers),
+    median: calculateMedian(numbers),
+    mode: calculateMode(numbers),
+    range: calculateRange(numbers),
+    stddev: calculateStdDev(numbers),
+    variance: calculateVariance(numbers)
+  };
+  
+  // Display all results
+  document.getElementById('stats-count').textContent = stats.count;
+  document.getElementById('stats-sum').textContent = formatStatsValue(stats.sum);
+  document.getElementById('stats-mean').textContent = formatStatsValue(stats.mean);
+  document.getElementById('stats-median').textContent = formatStatsValue(stats.median);
+  document.getElementById('stats-mode').textContent = formatStatsValue(stats.mode);
+  document.getElementById('stats-range').textContent = formatStatsValue(stats.range);
+  document.getElementById('stats-stddev').textContent = formatStatsValue(stats.stddev);
+  document.getElementById('stats-variance').textContent = formatStatsValue(stats.variance);
+  
+  document.getElementById('stats-all-results').style.display = 'block';
+  
+  // Also update main calculator display with the mean
+  currentExpression = stats.mean.toString();
+  left = stats.mean.toString();
+  operator = '';
+  right = '';
+  updateResult();
+}
+
+/**
+ * Clear statistics input and results
+ */
+function clearStats() {
+  document.getElementById('stats-input').value = '';
+  document.getElementById('stats-result').style.display = 'none';
+  document.getElementById('stats-all-results').style.display = 'none';
+  
+  // Clear calculator display
+  clearResult();
+}
+
+// Individual statistical functions
+function calculateSum(numbers) {
+  return numbers.reduce((a, b) => a + b, 0);
+}
+
+function calculateMean(numbers) {
+  const sum = calculateSum(numbers);
+  return sum / numbers.length;
+}
+
+function calculateMedian(numbers) {
+  // Sort the array (creates a copy to not modify original)
+  const sorted = [...numbers].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  } else {
+    return sorted[mid];
+  }
+}
+
+function calculateMode(numbers) {
+  const frequency = {};
+  let maxFreq = 0;
+  
+  for (let num of numbers) {
+    frequency[num] = (frequency[num] || 0) + 1;
+    if (frequency[num] > maxFreq) {
+      maxFreq = frequency[num];
+    }
+  }
+  
+  // If all numbers appear only once, there's no mode
+  if (maxFreq === 1) {
+    return 'No mode';
+  }
+  
+  // Get all numbers with max frequency
+  const modes = [];
+  for (let num in frequency) {
+    if (frequency[num] === maxFreq) {
+      modes.push(parseFloat(num));
+    }
+  }
+  
+  // Sort modes
+  modes.sort((a, b) => a - b);
+  
+  if (modes.length === 1) {
+    return modes[0];
+  } else {
+    return modes.join(', ');
+  }
+}
+
+function calculateRange(numbers) {
+  const min = Math.min(...numbers);
+  const max = Math.max(...numbers);
+  return max - min;
+}
+
+function calculateVariance(numbers) {
+  const mean = calculateMean(numbers);
+  const squaredDiffs = numbers.map(num => Math.pow(num - mean, 2));
+  const avgSquaredDiff = calculateMean(squaredDiffs);
+  return avgSquaredDiff;
+}
+
+function calculateStdDev(numbers) {
+  const variance = calculateVariance(numbers);
+  return Math.sqrt(variance);
+}
+
+/**
+ * Format statistics value for display
+ */
+function formatStatsValue(value) {
+  if (typeof value === 'string') {
+    return value;
+  }
+  
+  if (!isFinite(value)) {
+    return 'Error';
+  }
+  
+  // Round to 4 decimal places if needed
+  if (Math.abs(value) < 0.0001 && value !== 0) {
+    return value.toExponential(4);
+  }
+  
+  return parseFloat(value.toFixed(4));
+}
+
+// ============================================
+// END OF STATISTICS CALCULATOR FUNCTIONS
+// ============================================
+
 document
   .getElementById("language-selector")
   .addEventListener("change", function (event) {

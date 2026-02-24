@@ -4,10 +4,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <select id="language-selector">
-  <option value="en">English</option>
-  <option value="fr">Français</option>
-</select>
   <title>Calculator</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
   <style>
@@ -973,6 +969,124 @@ border-radius:15px;">
                           </div>
                         </div>
                         <!-- END Percentage Change Calculator Section -->
+
+                        <!-- Statistics Calculator - NEW -->
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="headingStatistics">
+                            <button class="accordion-button collapsed d-flex justify-content-between align-items-center"
+                              type="button" data-bs-toggle="collapse" data-bs-target="#collapseStatistics"
+                              aria-expanded="false" aria-controls="collapseStatistics">
+                              <span>📈 Statistics Calculator</span>
+                            </button>
+                          </h2>
+                          <div id="collapseStatistics" class="accordion-collapse collapse"
+                            aria-labelledby="headingStatistics" data-bs-parent="#converterAccordion">
+                            <div class="accordion-body">
+                              <p class="text-muted small mb-3">Enter numbers separated by commas or spaces to calculate statistics</p>
+                              
+                              <!-- Input Area -->
+                              <div class="mb-3">
+                                <label class="form-label small" style="font-weight: 600;">Enter Numbers</label>
+                                <textarea class="form-control" id="stats-input" rows="2" 
+                                  placeholder="e.g., 10, 20, 30, 40, 50 or 10 20 30 40 50"></textarea>
+                              </div>
+
+                              <!-- Quick Stats Buttons -->
+                              <div class="d-grid gap-2 mb-3">
+                                <div class="row g-1">
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('mean')" title="Average of all numbers">
+                                      📊 Mean
+                                    </button>
+                                  </div>
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('median')" title="Middle value when sorted">
+                                      📍 Median
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="row g-1">
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('mode')" title="Most frequent value(s)">
+                                      🔁 Mode
+                                    </button>
+                                  </div>
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('stddev')" title="Standard Deviation (Population)">
+                                      📐 Std Dev
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="row g-1">
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('variance')" title="Variance (Population)">
+                                      📉 Variance
+                                    </button>
+                                  </div>
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('range')" title="Difference between max and min">
+                                      ↔️ Range
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="row g-1">
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('sum')" title="Sum of all numbers">
+                                      ➕ Sum
+                                    </button>
+                                  </div>
+                                  <div class="col-6">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="calculateStats('count')" title="Count of numbers">
+                                      # Count
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Calculate All Button -->
+                              <div class="d-grid gap-2 mb-3">
+                                <button class="btn btn-success btn-sm" onclick="calculateAllStats()">
+                                  📈 Calculate All Statistics
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="clearStats()">
+                                  Clear
+                                </button>
+                              </div>
+
+                              <!-- Single Result Display -->
+                              <div id="stats-result" class="alert alert-info py-2 px-3 mb-0" style="display: none;">
+                                <strong id="stats-result-label"></strong>: <span id="stats-result-value"></span>
+                              </div>
+
+                              <!-- All Results Display -->
+                              <div id="stats-all-results" class="alert alert-success py-2 px-3 mb-0" style="display: none;">
+                                <div class="row">
+                                  <div class="col-6">
+                                    <div class="mb-1"><strong>Count:</strong> <span id="stats-count"></span></div>
+                                    <div class="mb-1"><strong>Sum:</strong> <span id="stats-sum"></span></div>
+                                    <div class="mb-1"><strong>Mean:</strong> <span id="stats-mean"></span></div>
+                                    <div class="mb-1"><strong>Median:</strong> <span id="stats-median"></span></div>
+                                  </div>
+                                  <div class="col-6">
+                                    <div class="mb-1"><strong>Mode:</strong> <span id="stats-mode"></span></div>
+                                    <div class="mb-1"><strong>Range:</strong> <span id="stats-range"></span></div>
+                                    <div class="mb-1"><strong>Std Dev:</strong> <span id="stats-stddev"></span></div>
+                                    <div class="mb-1"><strong>Variance:</strong> <span id="stats-variance"></span></div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Examples -->
+                              <div class="alert alert-light py-2 px-3 mt-3 mb-0 border" style="font-size: 0.85rem;">
+                                <strong>Examples:</strong><br>
+                                • Input: 10, 20, 30, 40, 50 → <strong>Mean: 30, Median: 30</strong><br>
+                                • Input: 1, 2, 2, 3, 4 → <strong>Mode: 2</strong><br>
+                                • Input: 2, 4, 4, 4, 5, 5, 7 → <strong>Range: 5</strong>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- END Statistics Calculator Section -->
 
                       </div>
                       <!-- Simultaneous Equation Solver -->
