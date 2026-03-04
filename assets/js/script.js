@@ -3271,4 +3271,93 @@ function roundToDecimal(dp) {
   const val = parseFloat(document.getElementById('result').value);
   if (isNaN(val)) return;
   document.getElementById('result').value = val.toFixed(dp);
+
+}
+
+// ========================================================
+// ================= FORMULA CALCULATOR ===================
+// ========================================================
+
+const formulas={
+  geometry:{
+    circleArea:{name:"Area of Circle",inputs:["Radius"],calc:v=>Math.PI*v[0]*v[0]},
+    circleCircumference:{name:"Circumference of Circle",inputs:["Radius"],calc:v=>2*Math.PI*v[0]},
+    triangleArea:{name:"Area of Triangle",inputs:["Base","Height"],calc:v=>0.5*v[0]*v[1]},
+    rectangleArea:{name:"Area of Rectangle",inputs:["Length","Width"],calc:v=>v[0]*v[1]},
+    squareArea:{name:"Area of Square",inputs:["Side"],calc:v=>v[0]*v[0]},
+    cubeVolume:{name:"Volume of Cube",inputs:["Side"],calc:v=>v[0]**3},
+    sphereVolume:{name:"Volume of Sphere",inputs:["Radius"],calc:v=>(4/3)*Math.PI*v[0]**3},
+    cylinderVolume:{name:"Volume of Cylinder",inputs:["Radius","Height"],calc:v=>Math.PI*v[0]**2*v[1]},
+    pythagoras:{name:"Pythagorean Theorem",inputs:["a","b"],calc:v=>Math.sqrt(v[0]**2+v[1]**2)},
+    sphereSurface:{name:"Surface Area of Sphere",inputs:["Radius"],calc:v=>4*Math.PI*v[0]**2}
+  },
+  finance:{
+    simpleInterest:{name:"Simple Interest",inputs:["Principal","Rate","Time"],calc:v=>(v[0]*v[1]*v[2])/100},
+    compoundInterest:{name:"Compound Interest",inputs:["Principal","Rate","Time","n"],calc:v=>v[0]*(1+v[1]/100/v[3])**(v[3]*v[2])},
+    percentage:{name:"Percentage",inputs:["Value","Total"],calc:v=>(v[0]/v[1])*100},
+    discount:{name:"Discount Price",inputs:["Original Price","Discount %"],calc:v=>v[0]-(v[1]/100)*v[0]},
+    profit:{name:"Profit/Loss",inputs:["Selling Price","Cost Price"],calc:v=>v[0]-v[1]}
+  },
+  algebra:{
+    slope:{name:"Slope of Line",inputs:["x1","y1","x2","y2"],calc:v=>(v[3]-v[1])/(v[2]-v[0])},
+    distance:{name:"Distance Between Points",inputs:["x1","y1","x2","y2"],calc:v=>Math.sqrt((v[2]-v[0])**2+(v[3]-v[1])**2)},
+    average:{name:"Average",inputs:["Sum","Count"],calc:v=>v[0]/v[1]},
+    speed:{name:"Speed",inputs:["Distance","Time"],calc:v=>v[0]/v[1]},
+    quadratic:{name:"Quadratic Formula",inputs:["a","b","c"],calc:v=>(-v[1]+Math.sqrt(v[1]**2-4*v[0]*v[2]))/(2*v[0])}
+  }
+};
+
+// Populate formulas
+document.addEventListener("DOMContentLoaded",()=>{
+
+  const category=document.getElementById("formulaCategory");
+  const select=document.getElementById("formulaSelect");
+  const container=document.getElementById("formulaInputs");
+
+  if(!category) return;
+
+  category.addEventListener("change",()=>{
+    select.innerHTML='<option value="">Select Formula</option>';
+    container.innerHTML='';
+    if(!category.value) return;
+
+    Object.entries(formulas[category.value]).forEach(([key,f])=>{
+      select.innerHTML+=`<option value="${key}">${f.name}</option>`;
+    });
+  });
+
+  select.addEventListener("change",()=>{
+    container.innerHTML='';
+    const f=formulas[category.value]?.[select.value];
+    if(!f) return;
+
+    f.inputs.forEach((label,i)=>{
+      container.innerHTML+=`
+        <input type="number" class="form-control mb-2"
+        placeholder="${label}" id="f${i}">
+      `;
+    });
+  });
+
+});
+
+// Calculate formula
+function calculateFormula(){
+  const category=document.getElementById("formulaCategory").value;
+  const key=document.getElementById("formulaSelect").value;
+  if(!category||!key) return;
+
+  const formula=formulas[category][key];
+  let values=[];
+
+  for(let i=0;i<formula.inputs.length;i++)
+    values.push(parseFloat(document.getElementById("f"+i).value)||0);
+
+  const result=formula.calc(values);
+
+  // Display inside Formula Calculator
+  document.getElementById("formula-result").innerHTML =
+    `<div class="alert alert-success mt-2">
+       Result: <strong>${result}</strong>
+     </div>`;
 }
