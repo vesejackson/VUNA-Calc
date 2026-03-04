@@ -1565,45 +1565,43 @@ function copyResult() {
 }
 
 function percentToResult() {
-    // operate on the text currently shown in the display
+
     if (!currentExpression) return;
 
-    // split into <left><operator><right> using the last operator (including **)
     const match = currentExpression.match(/(.+?)(\*\*|[+\-*/^])([0-9.]*)$/);
 
     if (!match) {
-        // no operator present – just divide the whole number by 100
+
         const num = parseFloat(currentExpression);
         if (isNaN(num)) return;
+
         currentExpression = (num / 100).toString();
+
     } else {
+
         const leftPart = match[1];
         const rightPart = match[3];
 
-        if (!rightPart) {
-            // nothing to convert yet
-            return;
-        }
+        if (!rightPart) return;
 
-        // evaluate left part in case it contains an expression
         let leftVal;
+
         try {
             leftVal = eval(leftPart);
         } catch (e) {
             leftVal = parseFloat(leftPart);
         }
+
         const rightVal = parseFloat(rightPart);
         if (isNaN(leftVal) || isNaN(rightVal)) return;
 
         const percentVal = (leftVal * rightVal) / 100;
-        // replace entire expression with the computed percent value
+
         currentExpression = percentVal.toString();
     }
 
-    // reset state variables for safety
-    left = currentExpression;
-    operator = "";
-    right = "";
+    // 🔥 ADD THIS LINE
+    currentExpression += "*";
 
     updateResult();
 }
