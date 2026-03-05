@@ -1477,6 +1477,53 @@ border-radius:15px;">
                           </div>
                         </div>
                         <!-- END BMI Calculator Section -->
+
+                        <!-- GCD & LCM CALCULATOR SECTION -->
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="headingGCDLCM">
+                            <button class="accordion-button collapsed d-flex justify-content-between align-items-center"
+                              type="button" data-bs-toggle="collapse" data-bs-target="#collapseGCDLCM"
+                              aria-expanded="false" aria-controls="collapseGCDLCM">
+                              <span>🔢 GCD & LCM Calculator</span>
+                            </button>
+                          </h2>
+                          <div id="collapseGCDLCM" class="accordion-collapse collapse" aria-labelledby="headingGCDLCM"
+                            data-bs-parent="#converterAccordion">
+                            <div class="accordion-body">
+                              <p class="text-muted small mb-3">Calculate Greatest Common Divisor (GCD) and Least Common Multiple (LCM)</p>
+
+                              <div class="mb-3">
+                                <label class="form-label small" style="font-weight: 600;">First Number</label>
+                                <input type="number" class="form-control form-control-sm" id="gcd-num1"
+                                  placeholder="e.g., 48" min="1" step="1">
+                              </div>
+
+                              <div class="mb-3">
+                                <label class="form-label small" style="font-weight: 600;">Second Number</label>
+                                <input type="number" class="form-control form-control-sm" id="gcd-num2"
+                                  placeholder="e.g., 18" min="1" step="1">
+                              </div>
+
+                              <!-- Calculate Button -->
+                              <div class="d-grid gap-2 mb-3">
+                                <button class="btn btn-primary btn-sm" onclick="calculateGCDLCM()">
+                                  Calculate GCD & LCM
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="clearGCDLCM()">
+                                  Clear
+                                </button>
+                              </div>
+
+                              <!-- Result Display -->
+                              <div id="gcd-lcm-result" class="alert alert-info py-2 px-3 mb-0" style="display: none;">
+                                <div class="mb-2"><strong>GCD (Greatest Common Divisor):</strong> <span id="gcd-value"></span></div>
+                                <div class="mb-2"><strong>LCM (Least Common Multiple):</strong> <span id="lcm-value"></span></div>
+                                <div class="small text-muted mt-2"><strong>💡 Tip:</strong> GCD is the largest number that divides both numbers. LCM is the smallest number divisible by both.</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- END GCD & LCM Calculator Section -->
                       </div>
                     </div>
                   </div>
