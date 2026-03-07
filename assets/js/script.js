@@ -1,3 +1,8 @@
+// ===============================
+// 🧠 SMART RESULT MEMORY FEATURE
+// ===============================
+
+let LAST_RESULT = 0;
 // ------------------------------
 // Theme Toggle Logic
 // ------------------------------
@@ -474,7 +479,18 @@ function calculateResult() {
       return;
     }
     let normalizedExpression = normalizeExpression(currentExpression);
+
+// 🧠 Replace "ans" with last result automatically
+    normalizedExpression = normalizedExpression.replace(/\bans\b/gi, LAST_RESULT);
+
+// Calculate result
     let result = eval(normalizedExpression);
+
+// Save result for future expressions
+    LAST_RESULT = result;
+
+// Display normally
+    display.value = result;
 
     if (isNaN(result) || !isFinite(result)) {
       throw new Error();
@@ -3358,4 +3374,84 @@ function calculateFormula(){
     `<div class="alert alert-success mt-2">
        Result: <strong>${result}</strong>
      </div>`;
+}
+
+
+// ============================================
+// GCD & LCM CALCULATOR FUNCTIONS
+// ============================================
+
+/**
+ * Calculate Greatest Common Divisor using Euclidean algorithm
+ */
+function findGCD(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b !== 0) {
+    const temp = b;
+    b = a % b;
+    a = temp;
+  }
+  return a;
+}
+
+/**
+ * Calculate Least Common Multiple using the formula: LCM(a,b) = (a * b) / GCD(a,b)
+ */
+function findLCM(a, b) {
+  return Math.abs(a * b) / findGCD(a, b);
+}
+
+/**
+ * Main function to calculate GCD and LCM
+ */
+function calculateGCDLCM() {
+  const num1Input = document.getElementById('gcd-num1');
+  const num2Input = document.getElementById('gcd-num2');
+  const resultDiv = document.getElementById('gcd-lcm-result');
+
+  if (!num1Input.value || !num2Input.value) {
+    alert('Please enter both numbers');
+    return;
+  }
+
+  const num1 = parseInt(num1Input.value);
+  const num2 = parseInt(num2Input.value);
+
+  if (isNaN(num1) || isNaN(num2) || num1 <= 0 || num2 <= 0) {
+    alert('Please enter valid positive integers');
+    return;
+  }
+
+  const gcd = findGCD(num1, num2);
+  const lcm = findLCM(num1, num2);
+
+  // Display results
+  document.getElementById('gcd-value').textContent = gcd;
+  document.getElementById('lcm-value').textContent = lcm;
+  resultDiv.style.display = 'block';
+
+  // Add to history
+  calculationHistory.push({
+    expression: `GCD(${num1}, ${num2}) = ${gcd}; LCM(${num1}, ${num2}) = ${lcm}`,
+    words: `GCD: ${numberToWords(gcd)}, LCM: ${numberToWords(lcm)}`,
+    time: new Date().toLocaleTimeString(),
+  });
+
+  if (calculationHistory.length > 20) {
+    calculationHistory.shift();
+  }
+
+  localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+  renderHistory();
+  resetRedoIndex();
+}
+
+/**
+ * Clear GCD & LCM calculator inputs and results
+ */
+function clearGCDLCM() {
+  document.getElementById('gcd-num1').value = '';
+  document.getElementById('gcd-num2').value = '';
+  document.getElementById('gcd-lcm-result').style.display = 'none';
 }
