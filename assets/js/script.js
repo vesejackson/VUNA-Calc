@@ -2262,7 +2262,7 @@ function calculatePercentageChange() {
   document.getElementById("pc-change-value").textContent =
     percentageChange.toFixed(2);
   document.getElementById("pc-absolute-change").textContent =
-    absoluteChange.toFixed(2);
+    Math.abs(absoluteChange).toFixed(2);
   document.getElementById("pc-description").textContent =
     `From ${original} to ${newValue} is ${description}`;
   resultDiv.style.display = "block";
@@ -2323,40 +2323,48 @@ function calculateMatrix() {
 
 function redoCalculation() {
   var calcHistory = localStorage.getItem("calcHistory");
-  var History = JSON.parse(calcHistory);
-
-  var lastIn = History[History.length - 1];
-  console.log(lastIn);
-  if (lastIn) {
-    // Restore the entire calculation with result
-    const tokenizer = /(-?\d*\.?\d+|[()+\-*/%^])/g;
-
-    const match = lastIn.expression.match(tokenizer);
-    console.log(match);
-    if (match) {
-      var left = match[0];
-      var operator = match[1];
-      var right = match[2];
-
-      // Show the full expression first
-      document.getElementById("result").value =
-        match.join("") + "=" + lastIn.answer;
-
-      // Then restore to just the result
-
-      // Disable redo button after use
-      // disableRedo();
-    }
+  if (!calcHistory) return;
+  var History;
+  try { History = JSON.parse(calcHistory); } catch(e) { return; }
+  if (!History || History.length === 0) return;
+  // Cap at last 5 entries; cycle through on repeated presses
+  var maxSteps = Math.min(5, History.length);
+  redoIndex = (redoIndex + 1) % maxSteps;
+  var entry = History[History.length - 1 - redoIndex];
+  if (!entry) return;
+  var displayExpr = entry.expression || "";
+  var displayAnswer = (entry.answer !== undefined && entry.answer !== null) ? entry.answer : "";
+  // Show full expression = answer (preserves sin/cos/tan/sqrt/! etc.)
+  var resultDisplay = document.getElementById("result");
+  if (resultDisplay) {
+    resultDisplay.value = displayAnswer !== "" ? displayExpr + " = " + displayAnswer : displayExpr;
   }
+  // Update the English word display area
+  if (entry.words) {
+    var wordResult = document.getElementById("word-result");
+    var wordArea = document.getElementById("word-area");
+    if (wordResult) wordResult.innerHTML = entry.words;
+    if (wordArea) wordArea.style.display = "flex";
+  }
+  // Update button label with current step indicator
+  var redoBtn = document.getElementById("redoBtn");
 }
+
+// Reset redo pointer when a new calculation is made
+function resetRedoIndex() {
+  redoIndex = -1;
+  var redoBtn = document.getElementById("redoBtn");
+  if (redoBtn) redoBtn.value = "↻ REDO";
+}
+
 function enableRedo() {
   const redoBtn = document.getElementById("redoBtn");
-  redoBtn.disabled = false;
+  if (redoBtn) redoBtn.disabled = false;
 }
 
 function disableRedo() {
   const redoBtn = document.getElementById("redoBtn");
-  redoBtn.disabled = true;
+  if (redoBtn) redoBtn.disabled = true;
 }
 
 // ============================================
@@ -3457,6 +3465,7 @@ function clearGCDLCM() {
 }
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("pi-btn").addEventListener("click", appendPi);
 });
@@ -3494,3 +3503,199 @@ function appendPi() {
     wordArea.style.display = "flex";
   }
 }
+
+// ===============================
+// BASE CONVERTER & BITWISE OPERATIONS
+// ===============================
+
+/**
+ * Convert decimal number to binary, hex, and octal
+ */
+function convertDecimal() {
+  const decimalInput = document.getElementById('decimal-input');
+  const value = parseInt(decimalInput.value);
+
+  if (isNaN(value) || value < 0) {
+    document.getElementById('binary-result').textContent = '0';
+    document.getElementById('hex-result').textContent = '0x0';
+    document.getElementById('octal-result').textContent = '0';
+    document.getElementById('decimal-result').textContent = '0';
+    return;
+  }
+
+  const binary = value.toString(2);
+  const hex = '0x' + value.toString(16).toUpperCase();
+  const octal = '0' + value.toString(8);
+
+  document.getElementById('binary-result').textContent = binary;
+  document.getElementById('hex-result').textContent = hex;
+  document.getElementById('octal-result').textContent = octal;
+  document.getElementById('decimal-result').textContent = value.toString();
+}
+
+/**
+ * Convert binary to decimal
+ */
+function convertFromBinary() {
+  const binaryInput = document.getElementById('binary-input').value.trim();
+  
+  if (!binaryInput) {
+    document.getElementById('binary-to-decimal').textContent = '0';
+    return;
+  }
+
+  // Validate binary input (only 0 and 1)
+  if (!/^[01]+$/.test(binaryInput)) {
+    document.getElementById('binary-to-decimal').textContent = 'Invalid binary';
+    return;
+  }
+
+  const decimal = parseInt(binaryInput, 2);
+  document.getElementById('binary-to-decimal').textContent = decimal.toString();
+}
+
+/**
+ * Convert hexadecimal to decimal
+ */
+function convertFromHex() {
+  const hexInput = document.getElementById('hex-input').value.trim();
+  
+  if (!hexInput) {
+    document.getElementById('hex-to-decimal').textContent = '0';
+    return;
+  }
+
+  // Validate hex input
+  if (!/^[0-9A-Fa-f]+$/.test(hexInput)) {
+    document.getElementById('hex-to-decimal').textContent = 'Invalid hex';
+    return;
+  }
+
+  const decimal = parseInt(hexInput, 16);
+  document.getElementById('hex-to-decimal').textContent = decimal.toString();
+}
+
+/**
+ * Convert octal to decimal
+ */
+function convertFromOctal() {
+  const octalInput = document.getElementById('octal-input').value.trim();
+  
+  if (!octalInput) {
+    document.getElementById('octal-to-decimal').textContent = '0';
+    return;
+  }
+
+  // Validate octal input (only 0-7)
+  if (!/^[0-7]+$/.test(octalInput)) {
+    document.getElementById('octal-to-decimal').textContent = 'Invalid octal';
+    return;
+  }
+
+  const decimal = parseInt(octalInput, 8);
+  document.getElementById('octal-to-decimal').textContent = decimal.toString();
+}
+
+/**
+ * Bitwise AND operation
+ */
+function bitwiseAND() {
+  const num1 = parseInt(document.getElementById('bitwise-num1').value) || 0;
+  const num2 = parseInt(document.getElementById('bitwise-num2').value) || 0;
+  
+  const result = num1 & num2;
+  displayBitwiseResult(`${num1} & ${num2}`, result);
+}
+
+/**
+ * Bitwise OR operation
+ */
+function bitwiseOR() {
+  const num1 = parseInt(document.getElementById('bitwise-num1').value) || 0;
+  const num2 = parseInt(document.getElementById('bitwise-num2').value) || 0;
+  
+  const result = num1 | num2;
+  displayBitwiseResult(`${num1} | ${num2}`, result);
+}
+
+/**
+ * Bitwise XOR operation
+ */
+function bitwiseXOR() {
+  const num1 = parseInt(document.getElementById('bitwise-num1').value) || 0;
+  const num2 = parseInt(document.getElementById('bitwise-num2').value) || 0;
+  
+  const result = num1 ^ num2;
+  displayBitwiseResult(`${num1} ^ ${num2}`, result);
+}
+
+/**
+ * Bitwise NOT operation
+ */
+function bitwiseNOT() {
+  const num1 = parseInt(document.getElementById('bitwise-num1').value) || 0;
+  
+  // JavaScript's NOT (~) operator works on 32-bit signed integers
+  // We'll use only the first number for NOT operation
+  const result = ~num1;
+  displayBitwiseResult(`~${num1}`, result);
+}
+
+/**
+ * Left Shift operation
+ */
+function leftShift() {
+  const num1 = parseInt(document.getElementById('bitwise-num1').value) || 0;
+  const num2 = parseInt(document.getElementById('bitwise-num2').value) || 0;
+  
+  const result = num1 << num2;
+  displayBitwiseResult(`${num1} << ${num2}`, result);
+}
+
+/**
+ * Right Shift operation
+ */
+function rightShift() {
+  const num1 = parseInt(document.getElementById('bitwise-num1').value) || 0;
+  const num2 = parseInt(document.getElementById('bitwise-num2').value) || 0;
+  
+  const result = num1 >> num2;
+  displayBitwiseResult(`${num1} >> ${num2}`, result);
+}
+
+/**
+ * Display bitwise operation results
+ */
+function displayBitwiseResult(operation, result) {
+  const resultDiv = document.getElementById('bitwise-result');
+  document.getElementById('bitwise-op').textContent = operation;
+  document.getElementById('bitwise-decimal').textContent = result;
+  document.getElementById('bitwise-binary').textContent = result.toString(2);
+  resultDiv.style.display = 'block';
+
+  // Add to history
+  calculationHistory.push({
+    expression: `${operation} = ${result}`,
+    words: `Bitwise operation: ${numberToWords(result)}`,
+    time: new Date().toLocaleTimeString(),
+  });
+
+  if (calculationHistory.length > 20) {
+    calculationHistory.shift();
+  }
+
+  localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+  renderHistory();
+  resetRedoIndex();
+}
+
+/**
+ * Clear bitwise calculator
+ */
+function clearBitwise() {
+  document.getElementById('bitwise-num1').value = '5';
+  document.getElementById('bitwise-num2').value = '3';
+  document.getElementById('bitwise-result').style.display = 'none';
+}
+
+
