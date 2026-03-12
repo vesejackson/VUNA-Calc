@@ -1582,6 +1582,89 @@
                               </div>
                             </div>
                             <!-- END GCD & LCM Calculator Section -->
+
+                            <!-- FIBONACCI SEQUENCE CALCULATOR SECTION -->
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="headingFibonacci">
+                                <button
+                                  class="accordion-button collapsed d-flex justify-content-between align-items-center"
+                                  type="button" data-bs-toggle="collapse" data-bs-target="#collapseFibonacci"
+                                  aria-expanded="false" aria-controls="collapseFibonacci">
+                                  <span>🔀 Fibonacci Sequence</span>
+                                </button>
+                              </h2>
+                              <div id="collapseFibonacci" class="accordion-collapse collapse"
+                                aria-labelledby="headingFibonacci" data-bs-parent="#converterAccordion">
+                                <div class="accordion-body">
+                                  <p class="text-muted small mb-3">Generate Fibonacci sequences, find nth terms, and check if numbers are Fibonacci</p>
+
+                                  <!-- Generate Sequence Section -->
+                                  <div class="mb-4">
+                                    <h6 class="text-secondary">📊 Generate Sequence</h6>
+                                    <div class="mb-3">
+                                      <label class="form-label small" style="font-weight: 600;">Number of Terms</label>
+                                      <input type="number" class="form-control form-control-sm" id="fib-terms"
+                                        placeholder="e.g., 10" min="1" max="50" step="1">
+                                      <small class="text-muted">Max 50 terms</small>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm w-100 mb-2" onclick="calculateFibonacci()">
+                                      Generate Sequence
+                                    </button>
+                                    
+                                    <div id="fib-result" class="alert alert-info py-2 px-3 mb-0" style="display: none;">
+                                      <div class="mb-2"><strong>Sequence:</strong> <span id="fib-sequence" style="word-break: break-all;"></span></div>
+                                      <div class="mb-2"><strong>Sum:</strong> <span id="fib-sum"></span></div>
+                                      <div class="mb-2"><strong>Count:</strong> <span id="fib-count"></span></div>
+                                      <div><strong>Last Term:</strong> <span id="fib-last"></span></div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Find Nth Term Section -->
+                                  <div class="mb-4">
+                                    <h6 class="text-secondary">🎯 Find Nth Term</h6>
+                                    <div class="mb-3">
+                                      <label class="form-label small" style="font-weight: 600;">Term Number (n)</label>
+                                      <input type="number" class="form-control form-control-sm" id="fib-nth-input"
+                                        placeholder="e.g., 10" min="0" max="80" step="1">
+                                      <small class="text-muted">F(0)=0, F(1)=1, F(2)=1, F(3)=2, etc. Max n=80</small>
+                                    </div>
+                                    <button class="btn btn-info btn-sm w-100 mb-2" onclick="findNthFibonacci()">
+                                      Find Nth Fibonacci Term
+                                    </button>
+                                    
+                                    <div id="fib-nth-result" class="alert alert-success py-2 px-3 mb-0" style="display: none;">
+                                      <div><strong>F(n) =</strong> <span id="fib-nth-value" style="font-size: 1.1em; font-weight: bold;"></span></div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Check if Fibonacci Section -->
+                                  <div class="mb-3">
+                                    <h6 class="text-secondary">✓ Check if Number is Fibonacci</h6>
+                                    <div class="mb-3">
+                                      <label class="form-label small" style="font-weight: 600;">Enter a Number</label>
+                                      <input type="number" class="form-control form-control-sm" id="fib-check-input"
+                                        placeholder="e.g., 13" min="0" step="1">
+                                    </div>
+                                    <div class="d-grid gap-2 mb-3">
+                                      <button class="btn btn-warning btn-sm" onclick="checkFibonacciNumber()">
+                                        Check if Fibonacci
+                                      </button>
+                                      <button class="btn btn-outline-secondary btn-sm" onclick="clearFibonacci()">
+                                        Clear All
+                                      </button>
+                                    </div>
+                                    
+                                    <div id="fib-check-result" class="alert py-2 px-3 mb-0" style="display: none; border-left: 4px solid #0d6efd;">
+                                      <div><strong>Number:</strong> <span id="fib-check-value"></span></div>
+                                      <div><strong>Is Fibonacci?</strong> <span id="fib-check-answer" style="font-weight: bold;"></span></div>
+                                    </div>
+                                  </div>
+
+                                  <div class="small text-muted mt-3"><strong>💡 Tip:</strong> The Fibonacci sequence (0, 1, 1, 2, 3, 5, 8, 13, 21, ...) appears in nature, art, and mathematics!</div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- END FIBONACCI Calculator Section -->
                           </div>
                         </div>
                       </div>

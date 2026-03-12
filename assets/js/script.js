@@ -3455,3 +3455,196 @@ function clearGCDLCM() {
   document.getElementById('gcd-num2').value = '';
   document.getElementById('gcd-lcm-result').style.display = 'none';
 }
+
+// ===============================
+// FIBONACCI SEQUENCE CALCULATOR
+// ===============================
+
+/**
+ * Generate Fibonacci sequence up to n terms
+ * @param {number} n - Number of terms to generate
+ * @returns {array} Array of Fibonacci numbers
+ */
+function generateFibonacci(n) {
+  if (n <= 0) return [];
+  if (n === 1) return [0];
+  
+  const fib = [0, 1];
+  for (let i = 2; i < n; i++) {
+    fib.push(fib[i - 1] + fib[i - 2]);
+  }
+  return fib.slice(0, n);
+}
+
+/**
+ * Calculate and display Fibonacci sequence
+ */
+function calculateFibonacci() {
+  const nInput = document.getElementById('fib-terms');
+  const resultDiv = document.getElementById('fib-result');
+  
+  if (!nInput.value) {
+    alert('Please enter the number of terms');
+    return;
+  }
+  
+  const n = parseInt(nInput.value);
+  
+  if (isNaN(n) || n <= 0) {
+    alert('Please enter a valid positive integer');
+    return;
+  }
+  
+  if (n > 50) {
+    alert('Maximum 50 terms allowed to prevent performance issues');
+    return;
+  }
+  
+  const fibSequence = generateFibonacci(n);
+  const sequenceStr = fibSequence.join(', ');
+  
+  // Display results
+  document.getElementById('fib-sequence').textContent = sequenceStr;
+  document.getElementById('fib-sum').textContent = fibSequence.reduce((a, b) => a + b, 0);
+  document.getElementById('fib-count').textContent = fibSequence.length;
+  if (fibSequence.length > 0) {
+    document.getElementById('fib-last').textContent = fibSequence[fibSequence.length - 1];
+  }
+  
+  resultDiv.style.display = 'block';
+  
+  // Add to history
+  calculationHistory.push({
+    expression: `Fibonacci(${n}) = ${sequenceStr.substring(0, 50)}${sequenceStr.length > 50 ? '...' : ''}`,
+    words: `First ${n} Fibonacci numbers: ${sequenceStr.substring(0, 50)}${sequenceStr.length > 50 ? '...' : ''}`,
+    time: new Date().toLocaleTimeString(),
+  });
+  
+  if (calculationHistory.length > 20) {
+    calculationHistory.shift();
+  }
+  
+  localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+  renderHistory();
+  resetRedoIndex();
+}
+
+/**
+ * Find the nth Fibonacci number
+ */
+function findNthFibonacci() {
+  const nInput = document.getElementById('fib-nth-input');
+  const resultDiv = document.getElementById('fib-nth-result');
+  
+  if (!nInput.value) {
+    alert('Please enter the term number (n)');
+    return;
+  }
+  
+  const n = parseInt(nInput.value);
+  
+  if (isNaN(n) || n < 0) {
+    alert('Please enter a valid non-negative integer');
+    return;
+  }
+  
+  if (n > 80) {
+    alert('Maximum 80th term allowed');
+    return;
+  }
+  
+  // Calculate nth Fibonacci using closed form or iterative method
+  let fib;
+  if (n === 0) {
+    fib = 0;
+  } else if (n === 1) {
+    fib = 1;
+  } else {
+    let a = 0, b = 1;
+    for (let i = 2; i <= n; i++) {
+      [a, b] = [b, a + b];
+    }
+    fib = b;
+  }
+  
+  // Display result
+  document.getElementById('fib-nth-value').textContent = fib;
+  resultDiv.style.display = 'block';
+  
+  // Add to history
+  calculationHistory.push({
+    expression: `F(${n}) = ${fib}`,
+    words: `${n}th Fibonacci number is ${numberToWords(fib)}`,
+    time: new Date().toLocaleTimeString(),
+  });
+  
+  if (calculationHistory.length > 20) {
+    calculationHistory.shift();
+  }
+  
+  localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+  renderHistory();
+  resetRedoIndex();
+}
+
+/**
+ * Check if a number is a Fibonacci number
+ */
+function checkFibonacciNumber() {
+  const numInput = document.getElementById('fib-check-input');
+  const resultDiv = document.getElementById('fib-check-result');
+  
+  if (!numInput.value) {
+    alert('Please enter a number to check');
+    return;
+  }
+  
+  const num = parseInt(numInput.value);
+  
+  if (isNaN(num) || num < 0) {
+    alert('Please enter a valid non-negative integer');
+    return;
+  }
+  
+  // Check if number is Fibonacci using the property:
+  // A number is Fibonacci if one or both of (5*n^2 + 4) or (5*n^2 - 4) is a perfect square
+  function isPerfectSquare(x) {
+    const sqrt = Math.sqrt(x);
+    return sqrt === Math.floor(sqrt);
+  }
+  
+  const isFib = isPerfectSquare(5 * num * num + 4) || isPerfectSquare(5 * num * num - 4);
+  
+  // Display result
+  document.getElementById('fib-check-value').textContent = num;
+  document.getElementById('fib-check-answer').textContent = isFib ? 'YES ✓' : 'NO ✗';
+  document.getElementById('fib-check-answer').style.color = isFib ? '#198754' : '#dc3545';
+  resultDiv.style.display = 'block';
+  
+  // Add to history
+  calculationHistory.push({
+    expression: `Is ${num} a Fibonacci number?`,
+    words: `${num} is ${isFib ? '' : 'not '}a Fibonacci number`,
+    time: new Date().toLocaleTimeString(),
+  });
+  
+  if (calculationHistory.length > 20) {
+    calculationHistory.shift();
+  }
+  
+  localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+  renderHistory();
+  resetRedoIndex();
+}
+
+/**
+ * Clear Fibonacci calculator inputs and results
+ */
+function clearFibonacci() {
+  document.getElementById('fib-terms').value = '';
+  document.getElementById('fib-result').style.display = 'none';
+  document.getElementById('fib-nth-input').value = '';
+  document.getElementById('fib-nth-result').style.display = 'none';
+  document.getElementById('fib-check-input').value = '';
+  document.getElementById('fib-check-result').style.display = 'none';
+}
